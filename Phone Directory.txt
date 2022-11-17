@@ -1,0 +1,90 @@
+// C++ Program to Implement a Phone
+// Directory Using Trie Data Structure
+#include <bits/stdc++.h>
+using namespace std;
+
+struct TrieNode
+{ unordered_map<char,TrieNode*> children;
+   bool islast;
+	TrieNode(){
+	    for(char i='a';i<='z';i++)
+	        children[i]=NULL;
+	         islast=false;
+	    
+	}
+};
+TrieNode* root=NULL;
+void insert(string s)
+{   TrieNode* itr=root;
+    for(int i=0;i<s.size();i++){
+        TrieNode* curr=itr->children[s[i]];
+        if(curr==NULL){
+            curr=new TrieNode();
+            itr->children[s[i]]=curr;
+        } itr=curr;
+      if(i==s.size()-1)
+      itr->islast=true;
+    }
+}
+
+
+void displayContactsUtil(TrieNode *curNode, string prefix)
+{ if(curNode->islast)
+  cout<<prefix<<endl;
+  for(char i='a';i<='z';i++){
+      TrieNode* nextnode=curNode->children[i];
+      if(nextnode!=NULL)
+        displayContactsUtil(nextnode,prefix+(char)i);
+  }
+}
+
+
+void displayContacts(string str)
+{ TrieNode* prev=root;
+  string prefix="";
+    int i=0;
+    for(int i=0;i<str.size();i++){
+        prefix+=(char)str[i];
+        char last=prefix[i];
+        TrieNode* curr=prev->children[last];
+        if(curr==NULL){
+          cout<<"not found"<<endl;
+            i++;
+            break;
+        } 
+        
+            cout << "Suggestions based on " << prefix <<endl;
+            displayContactsUtil(curr,prefix);
+            
+        
+          prev=curr;
+    }
+}
+
+
+
+void insertIntoTrie(string contacts[],int n)
+{  root=new TrieNode();
+    for(int i=0;i<n;i++)
+    insert(contacts[i]);
+}
+
+
+int main()
+{
+	
+	string contacts[] = {"akshay" , "pudari","akshu","harsha"};
+
+		int n = sizeof(contacts)/sizeof(string);
+	insertIntoTrie(contacts, n);
+  string s;
+	cout<<"enter a letter"<<endl;
+    cin>>s;
+  for(int i=0;i<s.size();i++){
+      if(s[i]<=90) s[i]=s[i]+32;
+  }
+	
+	displayContacts(s);
+
+	return 0;
+}
